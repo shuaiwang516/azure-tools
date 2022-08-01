@@ -16,9 +16,6 @@ echo "script dir: $dir"
 starttime=$(date)
 echo "starttime: $starttime"
 
-RESULTSDIR=~/output/
-mkdir -p ${RESULTSDIR}
-
 cd ~/
 projfile=$1
 rounds=$2
@@ -33,18 +30,28 @@ projname=$(echo ${line} | cut -d',' -f4)
 projsha1=$(echo ${line} | cut -d',' -f5)
 projsha2=$(echo ${line} | cut -d',' -f6)
 
-echo "================Cloning uRTS_artifacts repo to wd: SHA=${sha}"
+RESULTSDIR=~/output/
+mkdir -p $RESULTSDIR
+RESULTFILE=$RESULTSDIR/$mode-$projname-$projsha1-$projsha2-output.txt
+INSTALLINFO=$RESULTSDIR/$mode-$projname-$projsha1-$projsha2-install.txt
+touch RESULTFILE
+touch INSTALLINFO
+
+echo "================Cloning uRTS_artifacts repo to wd: SHA=$sha"
 cd $AZ_BATCH_TASK_WORKING_DIR
 git clone $gitURL
-urtsdirname=$(echo ${gitURL} | rev | cut -d'/' -f1 | rev | cut -d'.' -f1)
+urtsdirname=$(echo $gitURL | rev | cut -d'/' -f1 | rev | cut -d'.' -f1)
 cd $urtsdirname
 git checkout $sha
 echo "================Finish repo clone"
 
-touch $RESULTSDIR/output.txt
-echo "================Start Installing uRTS" >> $RESULTSDIR/output.txt
-ls
+echo "================Start Installing uRTS"
 cd experiment/
-bash setup_ubuntu.sh >> $RESULTSDIR/output.txt
-bash install_urts.sh >> $RESULTSDIR/output.txt
-echo "================Finish Installing uRTS" >> $RESULTSDIR/output.txt
+bash setup_ubuntu.sh | tee -a $INSTALLINFO
+bash install_tool.sh $mode | tee -a $INSTALLINFO
+echo "================Finish Installing uRTS"
+
+echo "================Start running $mode $projname $projsha1 $projsha2"
+#bash run_azure.sh urts hcommon 1576f81dfe0156514ec06b6051e5df7928a294e2 c665ab02ed5c400b0c5e9e350686cd0e5b5e6972
+bash run_azure.sh $mode $projname $projsha1 $projsha2 | tee -a $RESULTFILE
+echo "================Finish running $mode $projname $projsha1 $projsha2"
