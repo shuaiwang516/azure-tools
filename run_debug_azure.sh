@@ -26,3 +26,6 @@ echo "input_container: $input_container"
 
 line=$(head -n 1 $projfile)
 echo "================Debug for input: $line"
+
+echo "maven version: $(mvn -v)"
+echo "java version: $(java -version)"
