@@ -45,7 +45,7 @@ echo "================Finish repo clone"
 
 echo "================Maven Install Confuzz"
 export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
-$JAVA_HOME mvn clean install -DskipTests
+JAVA_HOME=$JAVA_HOME mvn clean install -DskipTests
 
 echo "================Start Running Fuzzing"
 cd scripts/
