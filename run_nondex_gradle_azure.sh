@@ -36,17 +36,17 @@ RESULTFILE=$RESULTSDIR/output.txt
 echo "================Cloning NonDex-plugin-test-repo repo to wd: SHA=$sha"
 cd $AZ_BATCH_TASK_WORKING_DIR
 git clone $gitURL
-nonDexDirName=$(echo $gitURL | rev | cut -d'/' -f1 | rev | cut -d'.' -f1)
-cd $nonDexDirName
+cd NonDex-plugin-test/
 git checkout $sha
 echo "================Finish repo clone"
 
 echo "================Gradle Install NonDex-plugin-test-repo"
 git clone https://github.com/jchen8460/Nondex-Gradle-Plugin.git
-cd Nondex-Gradle-Plugin && ./gradlew publishToMavenLocal && cd ..
+cd Nondex-Gradle-Plugin && export GRADLE_OPTS="-Dfile.encoding=utf-8" && ./gradlew publishToMavenLocal && cd ..
 
 echo "================Start Running nonDex"
 export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
-JAVA_HOME=$JAVA_HOME bash try_plugin.sh $projname | tee -a $RESULTFILE
+echo "current dir: $(pwd)"
+bash try_plugin.sh $projname | tee -a $RESULTFILE
 cp -r output/ $RESULTSDIR
 echo "================Finish Running nonDex $projname"
