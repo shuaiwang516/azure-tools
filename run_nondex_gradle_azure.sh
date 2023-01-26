@@ -42,11 +42,12 @@ echo "================Finish repo clone"
 
 echo "================Gradle Install NonDex-plugin-test-repo"
 git clone https://github.com/jchen8460/Nondex-Gradle-Plugin.git
-cd Nondex-Gradle-Plugin && export GRADLE_OPTS="-Dfile.encoding=utf-8" && ./gradlew publishToMavenLocal && cd ..
+cd Nondex-Gradle-Plugin && export GRADLE_OPTS="-Dfile.encoding=utf-8" && sudo ./gradlew publishToMavenLocal
 
 echo "================Start Running nonDex"
 export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
+cd ..
 echo "current dir: $(pwd)"
-bash try_plugin.sh $projname | tee -a $RESULTFILE
-cp -r output/ $RESULTSDIR
+sudo bash try_plugin.sh $projname | tee -a $RESULTFILE
+sudo cp -r output/ $RESULTSDIR
 echo "================Finish Running nonDex $projname"
