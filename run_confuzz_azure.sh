@@ -1,10 +1,9 @@
 #!/bin/bash
 
 # Example input:
-# confuzz-repo, sha, project_name, test1;test2;test3;...;testN, fuzzing_duration (in seconds)
-# https://github.com/xlab-uiuc/confuzz.git,9eb14bae3b75e893dcbb4dc911602808aa844a30,hcommon,org.apache.hadoop.crypto.key.kms.TestLoadBalancingKMSClientProvider#testTokenServiceCreationWithUriFormat;org.apache.hadoop.ipc.TestRPC#testRpcMetrics;org.apache.hadoop.ipc.TestRPC#testDecayRpcSchedulerMetrics,300
-
-# "Usage: python3 fuzz_on_azure.py <project_name> <test_list> <output_dir> <fuzzing_duration>"
+# confuzz-repo, sha, project_module, injection_config_file, fuzzing_duration (in seconds), test1+test2+test3+...+testN
+# https://github.com/xlab-uiuc/confuzz.git,9eb14bae3b75e893dcbb4dc911602808aa844a30,Mar20,hadoop-mapreduce-project/hadoop-mapreduce-client/hadoop-mapreduce-client-core,target/classes/mapred-ctest.xml,60,org.apache.hadoop.mapred.TestDebug#test+org.apache.hadoop.mapred.TestJobAclsManager#testGroups
+# "Usage: bash docker-fuzz.sh hadoop-yarn-project/hadoop-yarn/hadoop-yarn-common <project_name> <test_list> <output_dir> <fuzzing_duration>"
 
 if [[ $1 == "" ]]; then
     echo "arg1 - Path to CSV file with confuzz_repo_git_url,sha,project_name,test_list,duration"
@@ -27,13 +26,14 @@ line=$(head -n 1 $projfile)
 echo "================Starting experiment for input: $line"
 gitURL=$(echo ${line} | cut -d',' -f1)
 sha=$(echo ${line} | cut -d',' -f2)
-projname=$(echo ${line} | cut -d',' -f3)
-testlist=$(echo ${line} | cut -d',' -f4)
-duration=$(echo ${line} | cut -d',' -f5)
+dockerTag=$(echo ${line} | cut -d',' -f3)
+projmodule=$(echo ${line} | cut -d',' -f4)
+injectConfigFile=$(echo ${line} | cut -d',' -f5)
+testlist=$(echo ${line} | cut -d',' -f6)
+duration=$(echo ${line} | cut -d',' -f7)
 
 RESULTSDIR=~/output/
 mkdir -p $RESULTSDIR
-RESULTFILE=$RESULTSDIR/$projname-$testlist-output.txt
 
 echo "================Cloning confuzz repo to wd: SHA=$sha"
 cd $AZ_BATCH_TASK_WORKING_DIR
@@ -43,12 +43,12 @@ cd $confuzzDirName
 git checkout $sha
 echo "================Finish repo clone"
 
-echo "================Maven Install Confuzz"
-export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
-JAVA_HOME=$JAVA_HOME mvn clean install -DskipTests
+echo "================Pull Container"
+docker pull shuaiwang516/confuzz-image:$dockerTag
 
 echo "================Start Running Fuzzing"
-cd scripts/
-# "Usage: python3 fuzz_on_azure.py <project_name> <test_list> <output_dir> <fuzzing_duration>"
-python3 fuzz_on_azure.py $projname $testlist $RESULTSDIR $duration | tee -a $RESULTFILE
-echo "================Finish Running Fuzzing $projname $testlist"
+cd docker/
+# "Usage: bash docker-fuzz.sh Mar20 hadoop-mapreduce-project/hadoop-mapreduce-client/hadoop-mapreduce-client-core target/classes/mapred-ctest.xml 60 org.apache.hadoop.mapred.TestDebug#test+org.apache.hadoop.mapred.TestJobAclsManager#testGroups"
+bash docker-fuzz.sh $dockerTag $projmodule $injectConfigFile $duration $testlist
+echo "================Finish Running Fuzzing"
+cp -r result/ $RESULTSDIR
