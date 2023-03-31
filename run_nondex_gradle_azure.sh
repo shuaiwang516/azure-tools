@@ -40,15 +40,15 @@ cd NonDex-plugin-test/
 git checkout $sha
 echo "================Finish repo clone"
 
-git clone https://github.com/jchen8460/Nondex-Gradle-Plugin.git
-cd Nondex-Gradle-Plugin
-pluginSHA=$(git rev-parse HEAD)
-echo "================Installing NonDex-Gradle-Plugin: SHA=$pluginSHA"
-export GRADLE_OPTS="-Dfile.encoding=utf-8" && sudo ./gradlew publishToMavenLocal
+#git clone https://github.com/jchen8460/Nondex-Gradle-Plugin.git
+#cd Nondex-Gradle-Plugin
+#pluginSHA=$(git rev-parse HEAD)
+#echo "================Installing NonDex-Gradle-Plugin: SHA=$pluginSHA"
+#export GRADLE_OPTS="-Dfile.encoding=utf-8" && sudo ./gradlew publishToMavenLocal
 
 echo "================Start Running nonDex"
 export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
-cd ..
+#cd ..
 echo "current dir: $(pwd)"
 sudo bash try_plugin.sh $projname | tee -a $RESULTFILE
 sudo cp -r output/ $RESULTSDIR
