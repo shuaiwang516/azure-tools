@@ -30,9 +30,11 @@ dockerTag=$(echo ${line} | cut -d',' -f3)
 app=$(echo ${line} | cut -d',' -f4)
 projmodule=$(echo ${line} | cut -d',' -f5)
 regexFile=$(echo ${line} | cut -d',' -f6)
-injectConfigFile=$(echo ${line} | cut -d',' -f7)
-duration=$(echo ${line} | cut -d',' -f8)
-testlist=$(echo ${line} | cut -d',' -f9)
+configGenerator=$(echo ${line} | cut -d',' -f7)
+injectConfigFile=$(echo ${line} | cut -d',' -f8)
+duration=$(echo ${line} | cut -d',' -f9)
+testlist=$(echo ${line} | cut -d',' -f10)
+
 
 RESULTSDIR=~/output/
 mkdir -p $RESULTSDIR
@@ -52,6 +54,6 @@ echo "================Start Running Fuzzing"
 cd docker/
 # "Usage: bash docker-fuzz.sh Mar20 hadoop-mapreduce-project/hadoop-mapreduce-client/hadoop-mapreduce-client-core target/classes/mapred-ctest.xml 60 org.apache.hadoop.mapred.TestDebug#test+org.apache.hadoop.mapred.TestJobAclsManager#testGroups"
 # Usage: bash docker-fuzz.sh <imageTag> <app> <testModule> <regexFile> <injectConfigFile> <duration> <test1+test2+...+testN>
-bash docker-fuzz.sh $dockerTag $app $projmodule $regexFile $injectConfigFile $duration $testlist
+bash docker-fuzz.sh $dockerTag $app $projmodule $regexFile $configGenerator $injectConfigFile $duration $testlist
 echo "================Finish Running Fuzzing"
 cp -r result/ $RESULTSDIR
