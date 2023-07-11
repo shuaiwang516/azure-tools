@@ -38,20 +38,20 @@ testlist=$(echo ${line} | cut -d',' -f10)
 
 RESULTSDIR=~/output/
 mkdir -p $RESULTSDIR
-
-echo "================Cloning confuzz repo to wd: SHA=$sha"
+cp docker-fuzz.sh $AZ_BATCH_TASK_WORKING_DIR
+#echo "================Cloning confuzz repo to wd: SHA=$sha"
 cd $AZ_BATCH_TASK_WORKING_DIR
-git clone $gitURL
-confuzzDirName=$(echo $gitURL | rev | cut -d'/' -f1 | rev | cut -d'.' -f1)
-cd $confuzzDirName
-git checkout $sha
-echo "================Finish repo clone"
+#git clone $gitURL
+#confuzzDirName=$(echo $gitURL | rev | cut -d'/' -f1 | rev | cut -d'.' -f1)
+#cd $confuzzDirName
+#git checkout $sha
+#echo "================Finish repo clone"
 
 echo "================Pull Container"
 docker pull shuaiwang516/confuzz-image:$dockerTag
 
 echo "================Start Running Fuzzing"
-cd docker/
+#cd docker/
 # "Usage: bash docker-fuzz.sh Mar20 hadoop-mapreduce-project/hadoop-mapreduce-client/hadoop-mapreduce-client-core target/classes/mapred-ctest.xml 60 org.apache.hadoop.mapred.TestDebug#test+org.apache.hadoop.mapred.TestJobAclsManager#testGroups"
 # Usage: bash docker-fuzz.sh <imageTag> <app> <testModule> <regexFile> <injectConfigFile> <duration> <test1+test2+...+testN>
 bash docker-fuzz.sh $dockerTag $app $projmodule $regexFile $configGenerator $injectConfigFile $duration $testlist
