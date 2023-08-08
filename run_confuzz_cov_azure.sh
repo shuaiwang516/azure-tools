@@ -35,7 +35,7 @@ mkdir -p $RESULTSDIR
 cd $AZ_BATCH_TASK_WORKING_DIR
 
 echo "================Downloading docker-coverage file===================" 
-wget https://shuaiwang516.github.io/docker-coverage.sh
+wget https://mir.cs.illinois.edu/~swang516/confuzz/docker-coverage.sh
 
 echo "================Pull Container===================="
 docker pull shuaiwang516/confuzz-image:$dockerTag

@@ -46,7 +46,7 @@ cd $AZ_BATCH_TASK_WORKING_DIR
 #cd $confuzzDirName
 #git checkout $sha
 
-wget https://shuaiwang516.github.io/docker-fuzz.sh
+wget https://mir.cs.illinois.edu/~swang516/confuzz/docker-fuzz.sh
 echo "================Finish repo clone"
 
 echo "================Pull Container"
