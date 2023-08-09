@@ -47,5 +47,5 @@ bash docker-coverage.sh $dockerTag $app $projmodule $covlink
 echo "================Finish Running Fuzzing====================="
 cp -r result/ $RESULTSDIR
 
-endtime=$(data)
+endtime=$(date)
 echo "endtime: $endtime"
