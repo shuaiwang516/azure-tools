@@ -32,7 +32,6 @@ echo "================Cloning confuzz repo to wd: SHA=$sha"
 cd $AZ_BATCH_TASK_WORKING_DIR
 
 wget https://mir.cs.illinois.edu/~swang516/confuzz/docker-fuzz-debug.sh
-wget $fileLink
 echo "================Finish repo clone"
 
 echo "================Pull Container"
