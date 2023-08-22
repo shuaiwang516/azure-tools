@@ -1,14 +1,7 @@
-# imageTag=$1
-# app=$2
-# testModule=$3
-# regexFile=$4
-# configGenerator=$5
-# tests=$6
-
 #!/bin/bash
 
 if [[ $1 == "" ]]; then
-    echo "arg1 - Path to CSV file with imageTag,app,testModule,regexFile,configGenerator,tests"
+    echo "arg1 - Incorrect Arguments"
     exit
 fi
 
@@ -26,12 +19,18 @@ input_container=$3
 line=$(head -n 1 $projfile)
 
 echo "================Starting Confuzz DeFlaky For Input: $line==================="
-dockerTag=$(echo ${line} | cut -d',' -f1)
-app=$(echo ${line} | cut -d',' -f2)
-projmodule=$(echo ${line} | cut -d',' -f3)
-regexFile=$(echo ${line} | cut -d',' -f4)
-configGenerator=$(echo ${line} | cut -d',' -f5)
-tests=$(echo ${line} | cut -d',' -f6)
+gitURL=$(echo ${line} | cut -d',' -f1)
+sha=$(echo ${line} | cut -d',' -f2)
+dockerTag=$(echo ${line} | cut -d',' -f3)
+app=$(echo ${line} | cut -d',' -f4)
+projmodule=$(echo ${line} | cut -d',' -f5)
+regexFile=$(echo ${line} | cut -d',' -f6)
+configGenerator=$(echo ${line} | cut -d',' -f7)
+injectConfigFile=$(echo ${line} | cut -d',' -f8)
+duration=$(echo ${line} | cut -d',' -f9)
+testlist=$(echo ${line} | cut -d',' -f10)
+fuzzMode=$(echo ${line} | cut -d',' -f11)
+
 
 RESULTSDIR=~/output/
 mkdir -p $RESULTSDIR
@@ -46,7 +45,7 @@ docker pull shuaiwang516/confuzz-image:$dockerTag
 
 echo "================Start Checking Flakiness in Docker $dockerTag=================="
 
-bash docker-flaky.sh $dockerTag $app $projmodule $regexFile $configGenerator $tests
+bash docker-flaky.sh $dockerTag $app $projmodule $regexFile $configGenerator $testlist
 
 echo "================Finish Running Deflkay====================="
 cp -r result/ $RESULTSDIR
