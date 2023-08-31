@@ -6,7 +6,7 @@
 
 
 if [[ $1 == "" ]]; then
-    echo "arg1 - Path to CSV file with confuzz_repo_git_url,sha,project_name,test_list,duration"
+    echo "arg1 - Path to CSV file with dockerTag,app,projmodule,zipLink"
     exit
 fi
 
@@ -36,6 +36,7 @@ cd $AZ_BATCH_TASK_WORKING_DIR
 
 echo "================Downloading docker-coverage file===================" 
 wget https://mir.cs.illinois.edu/~swang516/confuzz/docker-coverage.sh
+wget https://mir.cs.illinois.edu/~swang516/confuzz/docker-generate-exec.sh
 
 echo "================Pull Container===================="
 docker pull shuaiwang516/confuzz-image:$dockerTag
